@@ -1,0 +1,99 @@
+Hackathon-Ready
+
+"I want to build a project called Aureus: Decentralized Wealth Preservation, focused on protecting long-term savings against inflation and currency debasement. The project should leverage Composability, Stellar Blockchain, DeFi, Rust, and Oracles.
+
+Core Vision
+
+Aureus manages user savings portfolios with automatic, on-chain adjustments based on real-world inflation data and FX currency debasement, ensuring retirement funds are preserved in stable and inflation-resistant assets.
+
+System Architecture (no UI for MVP)
+
+Smart Contracts Layer (Rust on Soroban)
+
+Portfolio Contract: Manages user deposits, allocations, and rebalancing triggers.
+
+Inflation Hedge Contract: Shifts allocations into inflation-resistant assets (stablecoins, tokenized commodities, yield strategies).
+
+Savings Contract: Handles deposits, locks, staking, and withdrawals.
+
+Oracle Contract: Receives and stores CPI, FX, and asset price data for real-time adjustments.
+
+Blockchain Layer (Stellar)
+
+Settlement of deposits and withdrawals.
+
+Stellar stablecoins as the base unit for retirement portfolios.
+
+Immutable savings records for transparency.
+
+DeFi Integrations
+
+Liquidity pools for FX rebalancing.
+
+Yield-bearing protocols for portfolio growth.
+
+Tokenized commodities/gold for inflation hedging.
+
+Data & Oracles
+
+CPI inflation indexes for country-specific adjustments.
+
+FX rates for tracking local currency debasement.
+
+Asset price feeds to optimize allocations.
+
+Step-by-Step Roadmap with Commit Messages
+Phase 1: MVP – Core Savings Contract
+
+Build savings contract in Rust/Soroban to accept deposits, withdrawals, and basic locks.
+
+Integrate Stellar stablecoin support.
+
+💻 Commit: feat: add core savings contract with deposit/withdraw/lock functionality using Soroban
+
+Phase 2: Oracle Integration
+
+Connect oracle feeds for CPI inflation rates, FX currency rates, and asset prices.
+
+Store fetched data on-chain via Oracle Contract.
+
+Add automatic inflation-adjusted rebalancing triggers.
+
+💻 Commit: feat: integrate oracle contract for CPI, FX, and asset price feeds with inflation-adjustment logic
+
+Phase 3: Inflation Hedge Module
+
+Implement Inflation Hedge Contract that rebalances funds into stablecoins, tokenized commodities, or yield-bearing assets.
+
+Ensure composability so other DeFi projects can reuse the hedge module.
+
+💻 Commit: feat: implement inflation hedge contract with stablecoin + tokenized asset rebalancing
+
+Phase 4: DeFi Yield Integration
+
+Integrate DeFi protocols for yield farming and liquidity pools.
+
+Automate allocation between inflation hedges and yield strategies.
+
+💻 Commit: feat: add DeFi yield strategies and liquidity pool integration to portfolio management
+
+Phase 5: Global Scaling & Localization
+
+Expand oracle integrations for global CPI datasets and localized FX rates.
+
+Add flexibility for multiple jurisdictions/countries.
+
+Enable multi-asset retirement portfolios.
+
+💻 Commit: feat: expand Aureus protocol with multi-country CPI data and localized FX support
+
+Extra Hackathon Winning Edge
+
+Show composability: Aureus modules can be plugged into pensions, payroll savings, or NGO treasury management.
+
+Emphasize impact: A solution for savers in high-inflation economies.
+
+Stress Rust + Soroban security as a differentiator.
+
+
+not for ai: you can add something to make it more excellent
