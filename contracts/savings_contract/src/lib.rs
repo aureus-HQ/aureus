@@ -5,9 +5,10 @@ pub struct SavingsContract;
 
 #[contractimpl]
 impl SavingsContract {
-    /// Initialize the contract with the stablecoin token address
-    pub fn init(env: Env, token_address: Address) {
+    /// Initialize the contract with the stablecoin token address and oracle address
+    pub fn init(env: Env, token_address: Address, oracle_address: Address) {
         env.storage().instance().set(&Symbol::new(&env, "token"), &token_address);
+        env.storage().instance().set(&Symbol::new(&env, "oracle"), &oracle_address);
     }
 
     /// Deposit stablecoins into the savings account
@@ -127,6 +128,44 @@ impl SavingsContract {
             .unwrap_or(Map::new(&env));
 
         locks.get(user).unwrap_or(0)
+    }
+
+    /// Rebalance based on inflation data from oracle
+    pub fn rebalance(env: Env, user: Address, country: Symbol) {
+        let oracle_address: Address = env.storage().instance().get(&Symbol::new(&env, "oracle")).unwrap();
+
+        // Call oracle to get CPI
+        let cpi: i128 = env.invoke_contract(
+            &oracle_address,
+            &Symbol::new(&env, "get_cpi"),
+            (country,).into_val(&env),
+        );
+
+        // Threshold for high inflation
+        let threshold = 200; // e.g., 2.00
+
+        if cpi > threshold {
+            // Extend lock by 1 year
+            let mut locks: Map<Address, u64> = env
+                .storage()
+                .persistent()
+                .get(&Symbol::new(&env, "locks"))
+                .unwrap_or(Map::new(&env));
+
+            let current_lock = locks.get(user.clone()).unwrap_or(0);
+            let new_lock = env.ledger().timestamp() + 31536000; // 1 year
+            if new_lock > current_lock {
+                locks.set(user.clone(), new_lock);
+                env.storage()
+                    .persistent()
+                    .set(&Symbol::new(&env, "locks"), &locks);
+
+                env.events().publish(
+                    (Symbol::new(&env, "rebalance"), user),
+                    new_lock,
+                );
+            }
+        }
     }
 }
 
