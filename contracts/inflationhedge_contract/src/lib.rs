@@ -13,7 +13,7 @@ impl InflationHedgeContract {
         env.storage().instance().set(&Symbol::new(&env, "yield"), &yield_token);
     }
 
-    /// Deposit stablecoins and allocate to hedge assets
+    /// Deposit stablecoin and allocate to hedge assets
     pub fn deposit(env: Env, user: Address, amount: i128) {
         user.require_auth();
 

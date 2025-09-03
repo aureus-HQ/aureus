@@ -5,7 +5,7 @@ pub struct OracleContract;
 
 #[contractimpl]
 impl OracleContract {
-    /// Set CPI inflation rate for a country (supports multiple countries)
+    /// Set CPI inflation rate for a country (support multiple countries)
     pub fn set_cpi(env: Env, country: Symbol, cpi: i128) {
         let mut cpi_data: Map<Symbol, i128> = env
             .storage()
