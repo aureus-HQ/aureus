@@ -1,23 +1,25 @@
 import React from 'react';
-import { setAllowed } from '@stellar/freighter-api';
 import { useStellar } from '../contexts/StellarContext';
 import { useAccount } from '../hooks/useAccount';
 import { useIsMounted } from '../hooks/useIsMounted';
-import { AlertTriangle, ExternalLink, Loader, CheckCircle } from 'lucide-react';
+import { ExternalLink, Loader, CheckCircle, Wallet } from 'lucide-react';
 
 const WalletConnect = () => {
   const mounted = useIsMounted();
   const account = useAccount();
-  const { loading, error } = useStellar();
+  const { loading, error, connectWallet, disconnectWallet, balance } = useStellar();
 
   const handleConnectClick = async () => {
     try {
-      await setAllowed();
-      // Refresh the page to update account state
-      window.location.reload();
+      await connectWallet();
     } catch (err) {
       console.error('Connection error:', err);
+      // Error handling is done in the context
     }
+  };
+
+  const handleDisconnectClick = () => {
+    disconnectWallet();
   };
 
   // Don't render anything until mounted to avoid hydration issues
@@ -32,15 +34,26 @@ const WalletConnect = () => {
     );
   }
 
-  // If already connected, show success message
+  // If already connected, show wallet info with disconnect option
   if (account) {
     return (
       <div className="flex flex-col items-center p-6 my-8 rounded-lg border border-green-200 bg-green-50 shadow-sm">
         <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
         <h2 className="text-lg font-bold text-green-800 mb-2">Wallet Connected</h2>
-        <p className="text-sm text-green-700 text-center">
-          Connected to {account.displayName}
-        </p>
+        <div className="text-center mb-4">
+          <p className="text-sm text-green-700">
+            Address: {account.displayName}
+          </p>
+          <p className="text-sm text-green-600 mt-1">
+            Balance: {balance} XLM
+          </p>
+        </div>
+        <button
+          onClick={handleDisconnectClick}
+          className="px-4 py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-200"
+        >
+          Disconnect Wallet
+        </button>
       </div>
     );
   }
@@ -82,7 +95,10 @@ const WalletConnect = () => {
             Connecting...
           </>
         ) : (
-          'Connect Freighter Wallet'
+          <>
+            <Wallet className="h-4 w-4 mr-2" />
+            Connect Freighter Wallet
+          </>
         )}
       </button>
 
