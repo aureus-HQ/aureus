@@ -27,6 +27,8 @@ const Savings = () => {
     depositToSavings, 
     withdrawFromSavings, 
     getSavingsBalance,
+    lockSavings,
+    getLockStatus,
     contractAddresses
   } = useStellar()
   
@@ -62,11 +64,14 @@ const Savings = () => {
   const fetchSavingsData = async () => {
     try {
       setLoadingData(true)
-      const savingsBalance = await getSavingsBalance()
+      const [savingsBalance, lockStatus] = await Promise.all([
+        getSavingsBalance(),
+        getLockStatus()
+      ])
       
       setSavingsData({
         balance: savingsBalance,
-        lockedUntil: 0, // TODO: Get from contract
+        lockedUntil: lockStatus * 1000, // Convert to milliseconds
         interestRate: 4.2, // TODO: Get from contract
         totalEarned: savingsBalance * 0.05 // Mock 5% earned
       })
@@ -101,9 +106,14 @@ const Savings = () => {
       setIsDepositing(true)
       toast.loading('Processing deposit...', { id: 'deposit' })
       
-      // Convert to smallest unit if needed
-      const stellarAmount = amount * 1e7 // Stellar uses 7 decimal places
-      await depositToSavings(stellarAmount, lockDuration)
+      // Deposit first
+      await depositToSavings(amount)
+      
+      // Then lock if duration is specified
+      if (lockDuration > 0) {
+        const lockDurationSeconds = lockDuration * 24 * 60 * 60 // Convert days to seconds
+        await lockSavings(lockDurationSeconds)
+      }
       
       toast.success('Deposit successful!', { id: 'deposit' })
       
@@ -148,8 +158,7 @@ const Savings = () => {
       setIsWithdrawing(true)
       toast.loading('Processing withdrawal...', { id: 'withdraw' })
       
-      const stellarAmount = amount * 1e7
-      await withdrawFromSavings(stellarAmount)
+      await withdrawFromSavings(amount)
       
       toast.success('Withdrawal successful!', { id: 'withdraw' })
       

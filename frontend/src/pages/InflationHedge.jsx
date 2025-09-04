@@ -12,14 +12,23 @@ import {
   BarChart3
 } from 'lucide-react'
 import { useStellar } from '../contexts/StellarContext'
+import { useAccount } from '../hooks/useAccount'
+import { useIsMounted } from '../hooks/useIsMounted'
 import WalletConnect from '../components/WalletConnect'
+import toast from 'react-hot-toast'
 
 const InflationHedge = () => {
+  const mounted = useIsMounted()
+  const account = useAccount()
   const { 
     isConnected, 
-    loading, 
+    loading,
+    balance, 
     depositToHedge, 
-    rebalanceHedge 
+    rebalanceHedge,
+    getHedgeAllocation,
+    getInflationData,
+    contractAddresses
   } = useStellar()
   
   const [hedgeData, setHedgeData] = useState({
